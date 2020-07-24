@@ -47,6 +47,10 @@ const menuTemplate = [
                 click: _ => createAddWindow()
             },
             {
+                label: 'Clear Todos',
+                click: _ => mainWindow.webContents.send('todo:clear')
+            },
+            {
                 label: 'Quit',
                 accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
                 click: _ => app.quit()
@@ -61,6 +65,9 @@ if (DEV) {
     menuTemplate.push({
         label: 'DEV',
         submenu: [
+            {
+                role: 'reload'
+            },
             {
                 label: 'DEV tools',
                 accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
