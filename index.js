@@ -11,6 +11,7 @@ app.on('ready', _ => {
         }
     })
     mainWindow.loadURL(`file://${__dirname}/main.html`)
+    mainWindow.on('closed', _ => app.quit())
     const mainMenu = Menu.buildFromTemplate(menuTemplate)
     Menu.setApplicationMenu(mainMenu)
 })
@@ -21,6 +22,7 @@ function createAddWindow() {
         height: 200,
         title: 'Add new todo'
     })
+    addWindow.loadURL(`file://${__dirname}/add.html`)
 }
 
 const menuTemplate = [
@@ -42,4 +44,19 @@ const menuTemplate = [
 
 if (process.platform === 'darwin') {
     menuTemplate.unshift({})
+}
+
+if (process.env.NODE_ENV !== 'production') {
+    menuTemplate.push({
+        label: 'development',
+        submenu: [
+            {
+                label: 'dev tools',
+                accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
+                click: (item, focusedWindow) => {
+                    focusedWindow.toggleDevTools()
+                }
+            }
+        ]
+    })
 }
