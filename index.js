@@ -1,7 +1,7 @@
 const DEV = process.env.NODE_ENV !== 'production'
 
 const electron = require('electron')
-const { app, BrowserWindow, Menu } = electron
+const { app, BrowserWindow, Menu, ipcMain } = electron
 
 let mainWindow
 let addWindow
@@ -20,12 +20,23 @@ app.on('ready', _ => {
 
 function createAddWindow() {
     addWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
         width: DEV ? 800 : 300,
         height: DEV ? 600: 200,
         title: 'Add new todo'
     })
     addWindow.loadURL(`file://${__dirname}/add.html`)
+    // Trigger garbage collector by setting
+    // object to null after usage
+    addWindow.on('closed', _ => addWindow = null)
 }
+
+ipcMain.on('todo:add', (evt, data) => {
+    mainWindow.webContents.send('todo:add', data)
+    addWindow.close()
+})
 
 const menuTemplate = [
     {
