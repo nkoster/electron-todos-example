@@ -1,3 +1,5 @@
+const DEV = process.env.NODE_ENV !== 'production'
+
 const electron = require('electron')
 const { app, BrowserWindow, Menu } = electron
 
@@ -18,8 +20,8 @@ app.on('ready', _ => {
 
 function createAddWindow() {
     addWindow = new BrowserWindow({
-        width: 300,
-        height: 200,
+        width: DEV ? 800 : 300,
+        height: DEV ? 600: 200,
         title: 'Add new todo'
     })
     addWindow.loadURL(`file://${__dirname}/add.html`)
@@ -42,18 +44,17 @@ const menuTemplate = [
     }
 ]
 
-if (process.platform === 'darwin') {
-    menuTemplate.unshift({})
-}
+process.platform === 'darwin' && menuTemplate.unshift({})
 
-if (process.env.NODE_ENV !== 'production') {
+if (DEV) {
     menuTemplate.push({
-        label: 'development',
+        label: 'DEV',
         submenu: [
             {
-                label: 'dev tools',
+                label: 'DEV tools',
                 accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
                 click: (item, focusedWindow) => {
+                    console.log(item.label)
                     focusedWindow.toggleDevTools()
                 }
             }
